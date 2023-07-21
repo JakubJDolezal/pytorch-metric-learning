@@ -19,7 +19,7 @@ class GenericPairLoss(BaseMetricLossFunction):
             return self.zero_losses()
         mat = self.distance(embeddings, ref_emb)
         mat2=mat
-        if minimum_matrix:
+        if minimum_matrix is not None:
             mat = 1 - torch.abs(mat - minimum_matrix)
         return self.loss_method(mat, mat2, indices_tuple)
 
