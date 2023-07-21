@@ -12,13 +12,16 @@ class GenericPairLoss(BaseMetricLossFunction):
             self.mat_based_loss if mat_based_loss else self.pair_based_loss
         )
 
-    def compute_loss(self, embeddings, labels, indices_tuple, ref_emb, ref_labels):
-        c_f.labels_or_indices_tuple_required(labels, indices_tuple)
+    def compute_loss(self, embeddings, labels, indices_tuple, ref_emb, ref_labels, minimum_matrix=None):
+        c_f.labels_or_indices_tuple_required(labels, indices_tuple, )
         indices_tuple = lmu.convert_to_pairs(indices_tuple, labels, ref_labels)
         if all(len(x) <= 1 for x in indices_tuple):
             return self.zero_losses()
         mat = self.distance(embeddings, ref_emb)
-        return self.loss_method(mat, indices_tuple)
+        mat2=mat
+        if minimum_matrix:
+            mat = 1 - torch.abs(mat - minimum_matrix)
+        return self.loss_method(mat, mat2, indices_tuple)
 
     def _compute_loss(self):
         raise NotImplementedError
@@ -30,11 +33,11 @@ class GenericPairLoss(BaseMetricLossFunction):
         neg_mask[a2, n] = 1
         return self._compute_loss(mat, pos_mask, neg_mask)
 
-    def pair_based_loss(self, mat, indices_tuple):
+    def pair_based_loss(self, mat,mat2, indices_tuple):
         a1, p, a2, n = indices_tuple
         pos_pair, neg_pair = [], []
         if len(a1) > 0:
             pos_pair = mat[a1, p]
         if len(a2) > 0:
-            neg_pair = mat[a2, n]
+            neg_pair = mat2[a2, n]
         return self._compute_loss(pos_pair, neg_pair, indices_tuple)
