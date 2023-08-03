@@ -32,11 +32,11 @@ def get_matches_and_diffs(labels, ref_labels=None):
     if ref_labels is None:
         ref_labels = labels
     if isinstance(labels[0], (list, np.ndarray, torch.tensor)):
-        matches = torch.zeros((len(labels), len(labels)))
+        matches = torch.zeros((len(labels), len(labels)), dtype=torch.bool)
         for i in range(len(labels)):
             for j in range(len(ref_labels)):
                 if bool(set(labels[i]) & set(ref_labels[j])):
-                    matches[i][j] = 1
+                    matches[i][j] = True
         diffs = matches ^ 1
         return matches, diffs
 
