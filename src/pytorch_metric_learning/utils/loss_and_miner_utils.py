@@ -31,13 +31,23 @@ def meshgrid_from_sizes(x, y, dim=0):
 def get_matches_and_diffs(labels, ref_labels=None):
     if ref_labels is None:
         ref_labels = labels
-    labels1 = labels.unsqueeze(1)
-    labels2 = ref_labels.unsqueeze(0)
-    matches = (labels1 == labels2).byte()
-    diffs = matches ^ 1
-    if ref_labels is labels:
-        matches.fill_diagonal_(0)
-    return matches, diffs
+    if isinstance(labels[0], (list, np.ndarray, torch.tensor)):
+        matches = torch.zeros((len(labels), len(labels)))
+        for i in range(labels):
+            for j in range(ref_labels):
+                if bool(set(labels[i]) & set(ref_labels[j])):
+                    matches[i][j] = 1
+        diffs = matches ^ 1
+        return matches, diffs
+
+    elif isinstance(labels[0], (int, float, np.number)):
+        labels1 = labels.unsqueeze(1)
+        labels2 = ref_labels.unsqueeze(0)
+        matches = (labels1 == labels2).byte()
+        diffs = matches ^ 1
+        if ref_labels is labels:
+            matches.fill_diagonal_(0)
+        return matches, diffs
 
 
 def get_all_pairs_indices(labels, ref_labels=None):
@@ -92,7 +102,7 @@ def get_all_triplets_indices(labels, ref_labels=None):
 
 # sample triplets, with a weighted distribution if weights is specified.
 def get_random_triplet_indices(
-    labels, ref_labels=None, t_per_anchor=None, weights=None
+        labels, ref_labels=None, t_per_anchor=None, weights=None
 ):
     a_idx, p_idx, n_idx = [], [], []
     labels_device = labels.device
@@ -216,7 +226,7 @@ def convert_to_weights(indices_tuple, labels, dtype, using_ref=False):
 
 
 def remove_self_comparisons(
-    indices_tuple, curr_batch_idx, ref_size, ref_is_subset=False
+        indices_tuple, curr_batch_idx, ref_size, ref_is_subset=False
 ):
     # remove self-comparisons
     assert len(indices_tuple) in [3, 4]
