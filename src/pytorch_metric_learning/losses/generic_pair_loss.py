@@ -14,14 +14,13 @@ class GenericPairLoss(BaseMetricLossFunction):
 
     def compute_loss(self, embeddings, labels, indices_tuple, ref_emb, ref_labels, minimum_matrix=None):
         c_f.labels_or_indices_tuple_required(labels, indices_tuple, )
-        indices_tuple = lmu.convert_to_pairs(indices_tuple, labels, ref_labels)
+        indices_tuple = lmu.convert_to_pairs(indices_tuple, labels, ref_labels, device=embeddings.device())
         if all(len(x) <= 1 for x in indices_tuple):
             return self.zero_losses()
         mat = self.distance(embeddings, ref_emb)
         mat2=mat
         if minimum_matrix is not None:
             mat = 1 - torch.abs(mat - minimum_matrix)
-        indices_tuple=indices_tuple.to(mat.device)
         return self.loss_method(mat, mat2, indices_tuple)
 
     def _compute_loss(self):

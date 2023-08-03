@@ -50,19 +50,21 @@ def get_matches_and_diffs(labels, ref_labels=None):
         return matches, diffs
 
 
-def get_all_pairs_indices(labels, ref_labels=None):
+def get_all_pairs_indices(labels, ref_labels=None, device=None):
     """
     Given a tensor of labels, this will return 4 tensors.
     The first 2 tensors are the indices which form all positive pairs
     The second 2 tensors are the indices which form all negative pairs
     """
     matches, diffs = get_matches_and_diffs(labels, ref_labels)
+    matches = matches.to(device)
+    diffs = diffs.to(device)
     a1_idx, p_idx = torch.where(matches)
     a2_idx, n_idx = torch.where(diffs)
     return a1_idx, p_idx, a2_idx, n_idx
 
 
-def convert_to_pairs(indices_tuple, labels, ref_labels=None):
+def convert_to_pairs(indices_tuple, labels, ref_labels=None, device=None):
     """
     This returns anchor-positive and anchor-negative indices,
     regardless of what the input indices_tuple is
@@ -72,7 +74,7 @@ def convert_to_pairs(indices_tuple, labels, ref_labels=None):
         labels: a tensor which has the label for each element in a batch
     """
     if indices_tuple is None:
-        return get_all_pairs_indices(labels, ref_labels)
+        return get_all_pairs_indices(labels, ref_labels, device=device)
     elif len(indices_tuple) == 4:
         return indices_tuple
     else:
