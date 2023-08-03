@@ -21,6 +21,7 @@ class GenericPairLoss(BaseMetricLossFunction):
         mat2=mat
         if minimum_matrix is not None:
             mat = 1 - torch.abs(mat - minimum_matrix)
+        indices_tuple=indices_tuple.to(mat.device)
         return self.loss_method(mat, mat2, indices_tuple)
 
     def _compute_loss(self):
