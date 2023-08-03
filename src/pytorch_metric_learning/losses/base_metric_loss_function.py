@@ -27,7 +27,7 @@ class BaseMetricLossFunction(
         Returns: the loss
         """
         self.reset_stats()
-        c_f.check_shapes(embeddings, labels)
+        # c_f.check_shapes(embeddings, labels)
         if labels is not None:
             labels = c_f.to_device(labels, embeddings)
         ref_emb, ref_labels = c_f.set_ref_emb(embeddings, labels, ref_emb, ref_labels)
