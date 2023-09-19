@@ -36,8 +36,9 @@ def get_matches_and_diffs(labels, ref_labels=None):
         for i in range(len(labels)):
             if labels[i]:
                 for j in range(len(ref_labels)):
-                    if bool(set(labels[i]) & set(ref_labels[j])):
-                        matches[i][j] = True
+                    if ref_labels[i]:
+                        if bool(set(labels[i]) & set(ref_labels[j])):
+                            matches[i][j] = True
         diffs = matches ^ 1
         return matches, diffs
 
