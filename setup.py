@@ -22,13 +22,13 @@ extras_require_docs = ["mkdocs-material"]
 extras_require_dev = ["black", "isort", "nbqa", "flake8"]
 
 setuptools.setup(
-    name="pytorch-metric-learning",
-    version=pytorch_metric_learning.__version__,
+    name="pytorch-metric-learning-betterNTXENT",
+    version=pytorch_metric_learning-betterNTXENT.__version__,
     author="Kevin Musgrave",
-    description="The easiest way to use deep metric learning in your application. Modular, flexible, and extensible. Written in PyTorch.",
+    description="The easiest way to use deep metric learning in your application. Modular, flexible, and extensible. Written in PyTorch. Now with some extra bits.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/KevinMusgrave/pytorch-metric-learning",
+    url="https://github.com/JakubJDolezal/pytorch-metric-learning-betterNTXENT",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     classifiers=[
